@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>iDea AI — by dBlueBerry</title>
+<style>
+:root{--bg:#000;--ink:#fff;--muted:#9b9ba2}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}
+body{
+  background:#000;color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+  "SF Pro Text",Inter,Helvetica,Arial,sans-serif;
+  overflow:hidden;
+}
+.page{min-height:100%;display:grid;place-items:center;padding:32px}
+.content{width:min(760px,100%);text-align:center;transform:translateY(-2vh)}
+.logo{
+  width:min(620px,88vw);height:auto;display:block;
+  margin:0 auto 76px;
+  animation:logoBreathe 5s ease-in-out infinite;
+}
+h1{
+  margin:0;font-size:clamp(30px,5vw,48px);line-height:1.04;
+  letter-spacing:-.045em;font-weight:500;
+}
+.sub{
+  margin:20px auto 0;max-width:560px;min-height:48px;
+  color:var(--muted);font-size:15px;line-height:1.55;
+  transition:opacity .35s ease;
+}
+.progress{
+  width:min(320px,72vw);height:2px;margin:42px auto 18px;
+  background:rgba(255,255,255,.15);overflow:hidden;border-radius:99px
+}
+.bar{width:0;height:100%;background:#fff;border-radius:inherit}
+.status{
+  min-height:20px;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:#77777f
+}
+.footer{
+  position:fixed;left:0;right:0;bottom:28px;text-align:center;
+  color:#55555d;font-size:10px;letter-spacing:.08em
+}
+@keyframes logoBreathe{
+  0%,100%{transform:scale(.985);opacity:.96}
+  50%{transform:scale(1.015);opacity:1}
+}
+@media (prefers-reduced-motion:reduce){.logo{animation:none}}
+</style>
+</head>
+<body>
+<main class="page">
+<section class="content" aria-live="polite">
+<img class="logo" src="idea-logo.png" alt="iDea AI — Design the Future">
+<h1>Preparing iDea</h1>
+<p class="sub" id="message">Connecting to the creative room.</p>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="status" id="status">Connecting to iDea</div>
+</section>
+</main>
+<div class="footer">by dBlueBerry</div>
+
+<script>
+const APP_URL="https://idea-ai-room.onrender.com/";
+const REDIRECT_URL="https://app.dblueberry.com/";
+const WAIT_MS=60000, STEP_MS=10000;
+
+const messages=[
+  "Connecting to the creative room.",
+  "Waking iDea.",
+  "Making space for new perspectives.",
+  "Exploring possibilities.",
+  "Preparing the room for unexpected ideas.",
+  "Almost ready."
+];
+
+const started=Date.now();
+const bar=document.getElementById("bar");
+const message=document.getElementById("message");
+const status=document.getElementById("status");
+
+function wakeIdea(){
+  const img=new Image();
+  img.src=APP_URL+"?warmup="+Date.now();
+}
+
+function setMessage(index){
+  message.style.opacity="0";
+  setTimeout(()=>{
+    message.textContent=messages[index];
+    message.style.opacity="1";
+  },180);
+}
+
+function update(){
+  const elapsed=Date.now()-started;
+  const progress=Math.min(100,elapsed/WAIT_MS*100);
+  bar.style.width=progress+"%";
+
+  const index=Math.min(messages.length-1,Math.floor(elapsed/STEP_MS));
+  if(message.dataset.index!==String(index)){
+    message.dataset.index=String(index);
+    setMessage(index);
+  }
+
+  status.textContent=[
+    "Connecting to iDea",
+    "Waking iDea",
+    "Opening new perspectives",
+    "Exploring possibilities",
+    "Preparing your workspace",
+    "Almost ready"
+  ][index];
+
+  if(elapsed>=WAIT_MS){
+    status.textContent="Entering iDea";
+    setTimeout(()=>window.location.replace(REDIRECT_URL),450);
+    return;
+  }
+  requestAnimationFrame(update);
+}
+
+wakeIdea();
+const warmupTimer=setInterval(wakeIdea,10000);
+setTimeout(()=>clearInterval(warmupTimer),WAIT_MS+1000);
+requestAnimationFrame(update);
+</script>
+</body>
+</html>
